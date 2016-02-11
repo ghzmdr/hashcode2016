@@ -20,13 +20,13 @@ var ApplyLogic = function (modelData) {
 		var weight = pWeight * quantity;
 
 		var maxQuantity;
-		if(weight <= drone.capacity) {
+		if(weight <= modelData.maxLoad) {
 			maxQuantity = quantity;
 		} else {
-			maxQuantity = Math.floor(drone.capacity/pWeight);
+			maxQuantity = Math.floor( (modelData.maxLoad - drone.weight)/pWeight);
 		}
 
-		drone.capacity -= maxQuantity * pWeight;
+		drone.weight += maxQuantity * pWeight;
 		return maxQuantity;	
 
 	}
@@ -67,7 +67,8 @@ var ApplyLogic = function (modelData) {
 
 					quantity -= maxLoad;
 
-					targetDrone
+					modelData.drones[targetDrone].isDelivering = true;
+
 					commands.push({
 						drone: targetDrone,
 						type: 'L',

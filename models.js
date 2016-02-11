@@ -46,8 +46,7 @@ var ModelAnalyzer = function (input) {
 			position: this.warehouses[0].position,
 			isDelivering: false,
 			items: [],
-			weight: 0,
-			maxWeight: this.maxLoad
+			weight: 0
 		}
 	}
 
