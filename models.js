@@ -23,11 +23,50 @@ var ModelAnalyzer = function (input) {
 	var currentLine = 3
 
 	for (var i = 0; i < this.warehouses.length; i++) {
+		var firstLine = lines[++currentLine]
+		var secondLine = lines[++currentLine]
 
+		this.warehouses[i] = {
+			position: {
+				x: firstLine.split(' ')[0],
+				y: firstLine.split(' ')[1]
+			},
+
+			products: []
+		}
+
+		secondLine.split(' ').forEach(function (itemQuantity) {
+			this.warehouses[i].products.push(parseInt(itemQuantity))
+		}.bind(this))
 	}
 
+	this.orders = new Array(parseInt(lines[++currentLine]))
 
-	console.log(this)
+	for (var i = 0; i < this.orders.length; i++) {
+		var firstLine = lines[++currentLine]
+		++currentLine
+		var thirdLine = lines[++currentLine]
+
+		this.orders[i] = {
+			position: {
+				x: firstLine.split(' ')[0],
+				y: firstLine.split(' ')[1]
+			},
+			items: []
+		}
+
+		//Orders are stored by their id, accessing items[id] will give
+		//the quantity of items with that id purchased
+
+		thirdLine.split(' ').forEach(function (itemId) {
+			var itemId = parseInt(itemId)
+
+			this.orders[i].items[itemId]
+				? this.orders[i].items[itemId]++
+				: this.orders[i].items[itemId] = 1
+
+		}.bind(this))
+	}
 }
 
 
