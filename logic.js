@@ -1,7 +1,7 @@
 var ApplyLogic = function (modelData) {
 
 
-	function getAvailableDrones() {
+	function getAvailableDrones(modelData) {
 		return modelData.drones.filter(function (drone) {
 			return !drone.isDelivering
 		})
@@ -30,7 +30,7 @@ var ApplyLogic = function (modelData) {
 		return nearestDrone;
 	}
 
-	function getWarehousesForProductType(t) {
+	function getWarehousesForProductType(modelData, t) {
 		return modelData.warehouses.filter(function(wh) {
 			return wh.products[t]
 		});
@@ -54,11 +54,10 @@ var ApplyLogic = function (modelData) {
 
 	}
 
-
-
-	function getOrderCost(order, orderIndex) {
+	function getOrderCost(model, orderIndex) {
 		var commands = [];
 		
+		var order = model.orders[orderIndex];
 		//while products to deliver
 		while(order.totalItems > 0) {
 			//for each product type
@@ -66,10 +65,10 @@ var ApplyLogic = function (modelData) {
 
 				while(quantity > 0) {
 					//get warehouses
-					var w = getWarehousesForProductType(t);
+					var w = getWarehousesForProductType(model, t);
 
 					//get available drones
-					var drones = getAvailableDrones();
+					var drones = getAvailableDrones(model);
 
 					//for each avail drone
 					var minLoadCost = Number.POSITIVE_INFINITY;
@@ -93,10 +92,10 @@ var ApplyLogic = function (modelData) {
 
 					quantity -= maxLoad;
 					order.totalItems -= maxLoad;
-					modelData.warehouses[targetWarehouse].products[t] -= maxLoad;
+					model.warehouses[targetWarehouse].products[t] -= maxLoad;
 
 					//set drone delivering
-					modelData.drones[targetDrone].isDelivering = true;
+					model.drones[targetDrone].isDelivering = true;
 					//push command
 					commands.push({
 						drone: targetDrone,
@@ -130,8 +129,7 @@ var ApplyLogic = function (modelData) {
 			cost += c.loadCost;
 		});
 
-		return cost;
-
+		return {commands: commands, cost: cost};
 
 	}
 }
