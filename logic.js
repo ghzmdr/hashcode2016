@@ -2,7 +2,9 @@ var ApplyLogic = function (modelData) {
 
 
 	function getAvailableDrones() {
-
+		return modelData.drones.filter(function (drone) {
+			return !drone.isDelivering
+		})
 	}
 
 	function getNearestDrones(pos) {
@@ -27,7 +29,7 @@ var ApplyLogic = function (modelData) {
 		}
 
 		drone.weight += maxQuantity * pWeight;
-		return maxQuantity;	
+		return maxQuantity;
 
 	}
 
@@ -41,7 +43,7 @@ var ApplyLogic = function (modelData) {
 				while(quantity > 0) {
 					//get warehouses
 					var w = getWarehousesForProductType(t);
-					
+
 					//get available drones
 					var drones = getAvailableDrones();
 
@@ -82,10 +84,10 @@ var ApplyLogic = function (modelData) {
 				order.totalItems -= quantity;
 
 
-				
 
 
-			}) 
+
+			})
 
 		}
 
