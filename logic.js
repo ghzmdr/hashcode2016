@@ -2,15 +2,38 @@ var ApplyLogic = function (modelData) {
 
 
 	function getAvailableDrones() {
+		return modelData.drones.filter(function (drone) {
+			return !drone.isDelivering
+		})
+	}
 
+	function getDistance(p1, p2) {
+		return Math.sqrt(
+			Math.pow(Math.abs(p1.x - p2.x), 2) +
+			Math.pow(Math.abs(p1.y - p2.y), 2)
+		)
 	}
 
 	function getNearestDrones(drones, pos) {
+		var smallestDroneDistance = getDistance(pos, drones[0]);
+		var nearestDrone = drones[0]
 
+		drones.forEach(function(drone) {
+			var distance = getDistance(pos, drone.position);
+
+			if (distance < smallestDroneDistance) {
+				nearestDrone = drone;
+				smallestDroneDistance = distance;
+			}
+		});
+
+		return nearestDrone;
 	}
 
 	function getWarehousesForProductType(t) {
-
+		return modelData.warehouses.filter(function(wh) {
+			return wh.products[t]
+		});
 	}
 
 	function getMaxLoad(drone, type, quantity) {
@@ -20,14 +43,14 @@ var ApplyLogic = function (modelData) {
 		var weight = pWeight * quantity;
 
 		var maxQuantity;
-		if(weight <= modelData.maxLoad) {
+		if(weight <= drone.capacity) {
 			maxQuantity = quantity;
 		} else {
-			maxQuantity = Math.floor( (modelData.maxLoad - drone.weight)/pWeight);
+			maxQuantity = Math.floor(drone.capacity/pWeight);
 		}
 
-		drone.weight += maxQuantity * pWeight;
-		return maxQuantity;	
+		drone.capacity -= maxQuantity * pWeight;
+		return maxQuantity;
 
 	}
 
@@ -44,7 +67,7 @@ var ApplyLogic = function (modelData) {
 				while(quantity > 0) {
 					//get warehouses
 					var w = getWarehousesForProductType(t);
-					
+
 					//get available drones
 					var drones = getAvailableDrones();
 
