@@ -1,4 +1,11 @@
+var clone = require('clone'),
+
 var ApplyLogic = function (modelData) {
+
+	modelData.orders.forEach(function(order, index) {
+		var model = clone(modelData);
+		var result = getOrderCost(model, index);
+	})
 
 
 	function getAvailableDrones(modelData) {
