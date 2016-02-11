@@ -1,5 +1,5 @@
-var ModelsAnalyzer = require('./models')
-var ApplyLogic = require('./logic')
+var ModelsAnalyzer = require('./models');
+var ApplyLogic = require('./logic');
 
 var fs = require('fs')
 

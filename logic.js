@@ -1,10 +1,11 @@
-var clone = require('clone'),
+var clone = require('clone');
 
 var ApplyLogic = function (modelData) {
 
 	modelData.orders.forEach(function(order, index) {
 		var model = clone(modelData);
 		var result = getOrderCost(model, index);
+		console.log(result);
 	})
 
 
@@ -15,10 +16,10 @@ var ApplyLogic = function (modelData) {
 	}
 
 	function getDistance(p1, p2) {
-		return Math.sqrt(
+		return Math.ceil(Math.sqrt(
 			Math.pow(Math.abs(p1.x - p2.x), 2) +
 			Math.pow(Math.abs(p1.y - p2.y), 2)
-		)
+		))
 	}
 
 	function getNearestDrones(drones, pos) {
@@ -50,13 +51,15 @@ var ApplyLogic = function (modelData) {
 		var weight = pWeight * quantity;
 
 		var maxQuantity;
-		if(weight <= drone.capacity) {
+		var capacity = modelData.maxLoad - drone.weight
+
+		if(weight <= capacity) {
 			maxQuantity = quantity;
 		} else {
-			maxQuantity = Math.floor(drone.capacity/pWeight);
+			maxQuantity = Math.floor(capacity/pWeight);
 		}
 
-		drone.capacity -= maxQuantity * pWeight;
+		drone.weight += maxQuantity * pWeight;
 		return maxQuantity;
 
 	}
@@ -68,7 +71,7 @@ var ApplyLogic = function (modelData) {
 		//while products to deliver
 		while(order.totalItems > 0) {
 			//for each product type
-			order.types.forEach(function(quantity, t) {
+			order.items.forEach(function(quantity, t) {
 
 				while(quantity > 0) {
 					//get warehouses
@@ -84,9 +87,9 @@ var ApplyLogic = function (modelData) {
 					//for each warehouse
 					w.forEach(function(warehouse, warehouseIndex) {
 						//for each avail drone
-						var nearest = getNearestDrones(drones, warehouse.pos);
+						var nearest = getNearestDrones(drones, warehouse.position);
 
-						var loadCost = getDistance(nearest, warehouse.pos) + 1;
+						var loadCost = getDistance(nearest.position, warehouse.position) + 1;
 
 						if(loadCost < minLoadCost) {
 							minLoadCost = loadCost;
@@ -102,7 +105,7 @@ var ApplyLogic = function (modelData) {
 					model.warehouses[targetWarehouse].products[t] -= maxLoad;
 
 					//set drone delivering
-					model.drones[targetDrone].isDelivering = true;
+					targetDrone.isDelivering = true;
 					//push command
 					commands.push({
 						drone: targetDrone,
@@ -119,8 +122,10 @@ var ApplyLogic = function (modelData) {
 						client: orderIndex,
 						product: t,
 						quantity: maxLoad,
-						loadCost: getDistance(targetDrone, order.pos) + 1
+						loadCost: getDistance(targetDrone.position, order.position) + 1
 					});
+
+					console.log(commands);
 
 				}
 
