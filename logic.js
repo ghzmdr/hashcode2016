@@ -10,7 +10,9 @@ var ApplyLogic = function (modelData) {
 	}
 
 	function getWarehousesForProductType(t) {
-
+		return modelData.warehouses.filter(function(wh) {
+			return wh.products[t]
+		});
 	}
 
 	function getMaxLoad(drone, type, quantity) {
