@@ -33,11 +33,11 @@ var ModelAnalyzer = function (input) {
 				y: firstLine.split(' ')[1]
 			},
 
-			products: []
+			products: {}
 		}
 
 		secondLine.split(' ').forEach(function (itemQuantity) {
-			this.warehouses[i].products.push(parseInt(itemQuantity))
+			this.warehouses[i].products[i] = parseInt(itemQuantity)
 		}.bind(this))
 	}
 
@@ -62,7 +62,7 @@ var ModelAnalyzer = function (input) {
 				x: firstLine.split(' ')[0],
 				y: firstLine.split(' ')[1]
 			},
-			items: [],
+			items: {},
 			totalItems: 0
 		}
 
