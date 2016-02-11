@@ -5,7 +5,7 @@ var ApplyLogic = function (modelData) {
 
 	}
 
-	function getNearestDrones(pos) {
+	function getNearestDrones(drones, pos) {
 
 	}
 
@@ -31,8 +31,11 @@ var ApplyLogic = function (modelData) {
 
 	}
 
-	function getOrderCost(order) {
+
+
+	function getOrderCost(order, orderIndex) {
 		var commands = [];
+		
 		//while products to deliver
 		while(order.totalItems > 0) {
 			//for each product type
@@ -52,7 +55,7 @@ var ApplyLogic = function (modelData) {
 					//for each warehouse
 					w.forEach(function(warehouse, warehouseIndex) {
 						//for each avail drone
-						var nearest = getNearestDrones(warehouse.pos);
+						var nearest = getNearestDrones(drones, warehouse.pos);
 
 						var loadCost = getDistance(nearest, warehouse.pos) + 1;
 
@@ -66,28 +69,46 @@ var ApplyLogic = function (modelData) {
 					var maxLoad = getMaxLoad(targetDrone, t, quantity);
 
 					quantity -= maxLoad;
+					order.totalItems -= maxLoad;
+					modelData.warehouses[targetWarehouse].products[t] -= maxLoad;
 
+					//set drone delivering
 					modelData.drones[targetDrone].isDelivering = true;
-
+					//push command
 					commands.push({
 						drone: targetDrone,
 						type: 'L',
 						warehouse: targetWarehouse,
 						product: t,
-						quantity: maxLoad
+						quantity: maxLoad,
+						loadCost: minLoadCost
+					});
+
+					commands.push({
+						drone: targetDrone,
+						type: 'D',
+						client: orderIndex,
+						product: t,
+						quantity: maxLoad,
+						loadCost: getDistance(targetDrone, order.pos) + 1
 					});
 
 				}
 
 				order.totalItems -= quantity;
 
-
-				
-
-
 			}) 
 
 		}
+
+		//compute load commands cost + deliver
+		var cost = 0;
+		commands.forEach(function(c) {
+			cost += c.loadCost;
+		});
+
+		return cost;
+
 
 	}
 }
