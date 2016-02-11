@@ -7,6 +7,13 @@ var ModelAnalyzer = function (input) {
 	this.mapH = line0Pieces[1]
 
 	this.drones = new Array(parseInt(line0Pieces[2]))
+	for (var i = 0; i < this.drones.length; i++) {
+		this.drones[i] = {
+			position: {x: 0, y: 0},
+			isDelivering: false
+		}
+	}
+
 	this.deadline = parseInt(line0Pieces[3])
 	this.maxLoad = parseInt(line0Pieces[4])
 
@@ -67,6 +74,8 @@ var ModelAnalyzer = function (input) {
 
 		}.bind(this))
 	}
+
+	console.log(this.drones);
 }
 
 
