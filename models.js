@@ -75,8 +75,6 @@ var ModelAnalyzer = function (input) {
 
 		}.bind(this))
 	}
-
-	console.log(this.drones);
 }
 
 

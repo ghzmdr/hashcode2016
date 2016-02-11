@@ -1,6 +1,9 @@
 var ModelsAnalyzer = require('./models')
+var ApplyLogic = require('./logic')
+
 var fs = require('fs')
 
 fs.readFile('./busy_day.in', 'utf8', function (err, data) {
-	var md = new ModelsAnalyzer(data)	
+	var ma = new ModelsAnalyzer(data)
+	var operations = ApplyLogic(ma)
 })
