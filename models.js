@@ -44,7 +44,10 @@ var ModelAnalyzer = function (input) {
 	for (var i = 0; i < this.drones.length; i++) {
 		this.drones[i] = {
 			position: this.warehouses[0].position,
-			isDelivering: false
+			isDelivering: false,
+			items: [],
+			weight: 0,
+			maxWeight: this.maxLoad
 		}
 	}
 
@@ -60,7 +63,8 @@ var ModelAnalyzer = function (input) {
 				x: firstLine.split(' ')[0],
 				y: firstLine.split(' ')[1]
 			},
-			items: {}
+			items: {},
+			totalItems: 0
 		}
 
 		//Orders are stored by their id, accessing items[id] will give
@@ -72,6 +76,8 @@ var ModelAnalyzer = function (input) {
 			this.orders[i].items[itemId]
 				? this.orders[i].items[itemId]++
 				: this.orders[i].items[itemId] = 1
+
+			this.orders[i].totalItems++;
 
 		}.bind(this))
 	}
